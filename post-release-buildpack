@@ -9,7 +9,7 @@ if [[ -d "$FILE_ROOT" ]] && [[ -n $(ls -p "$FILE_ROOT") ]]; then
   for path in $FILE_ROOT/*; do
     file=$(basename $path)
     dokku_log_verbose "- Copying $file"
-    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "cat > /app/$file" < "$path")
+    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "cat > /app/config/$file" < "$path")
     test "$(docker wait $id)" -eq 0
     docker commit $id $IMAGE > /dev/null
     docker stop $id > /dev/null 2>&1 || true
