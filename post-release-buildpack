@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-APP="$1"; IMAGE_TAG="$2"; IMAGE=$(get_app_image_name $APP $IMAGE_TAG); FILE_ROOT="$DOKKU_ROOT/$APP/DOKKU_FILES"
+APP="$1"; IMAGE_TAG="$2"; IMAGE=$(get_app_image_name $APP $IMAGE_TAG); FILE_ROOT="$DOKKU_ROOT/$APP/DOKKU_TARBALLS"
 verify_app_name "$APP"
 
 if [[ -d "$FILE_ROOT" ]] && [[ -n $(ls -p "$FILE_ROOT") ]]; then
-  dokku_log_info1 "Copying files into image..."
+  dokku_log_info1 "Copying tar files into image..."
   for path in $FILE_ROOT/*; do
     file=$(basename $path)
-    dokku_log_verbose "- Copying $file"
-    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "cat > /app/config/$file" < "$path")
+    dokku_log_verbose "- Copying Tar $file"
+    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "cat > /app/public/$file" < "$path")
+    test "$(docker wait $id)" -eq 0
+    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "tar -xvf /app/public/$file")
     test "$(docker wait $id)" -eq 0
     docker commit $id $IMAGE > /dev/null
     docker stop $id > /dev/null 2>&1 || true
