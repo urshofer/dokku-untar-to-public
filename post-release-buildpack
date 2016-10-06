@@ -11,7 +11,8 @@ if [[ -d "$FILE_ROOT" ]] && [[ -n $(ls -p "$FILE_ROOT") ]]; then
     dokku_log_verbose "- Copying Tar $file"
     id=$(docker run -i -a stdin $IMAGE /bin/bash -c "cat > /app/public/$file" < "$path")
     test "$(docker wait $id)" -eq 0
-    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "tar -xvf /app/public/$file")
+    dokku_log_verbose "- Extracting Tar $file"
+    id=$(docker run -i -a stdin $IMAGE /bin/bash -c "tar -xvf /app/public/$file -C /app/public")
     test "$(docker wait $id)" -eq 0
     docker commit $id $IMAGE > /dev/null
     docker stop $id > /dev/null 2>&1 || true
