@@ -1,4 +1,4 @@
 [plugin]
-description = "dokku plugin to copy rokfor configuration files from the host to the built docker image"
+description = "dokku plugin to copy a tar file to the /public folder of an app and untar it"
 version = "1.0.0"
 [plugin.config]
