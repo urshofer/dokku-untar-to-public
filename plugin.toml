@@ -1,4 +1,4 @@
 [plugin]
-description = "dokku plugin to copy a tar file to the /public folder of an app and untar it"
+description = "Dokku plugin that copies *.tar from DOKKU_TARBALLS to the app folder and untars them."
 version = "1.0.0"
 [plugin.config]
